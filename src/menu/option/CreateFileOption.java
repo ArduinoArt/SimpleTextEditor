@@ -12,15 +12,22 @@ import javax.swing.JPanel;
 
 public class CreateFileOption extends SubViewPanel{
 	private JMenuBar menuFile = new JMenuBar();
-	private JMenu mainFileMenu= new JMenu();
-	private JMenuItem menuItem = new JMenuItem("Test");
+	
 	private JFrame frame;
 	public CreateFileOption(String title) {
 		super(title);
-		JButton myBut = new JButton("Test");
-		myBut.setBounds(1, 1, 100, 100);
 		frame = new SubViewPanel(title).frameMethod();
-		frame.add(myBut);
+		frame.setJMenuBar(menuFile);
+		menuFile.add(createMenu());
+		
+	}
+	private JMenu createMenu(){
+		JMenu mainFileMenu= new JMenu("File");
+		JMenuItem newFile = new JMenuItem("New");
+		JMenuItem saveFile = new JMenuItem("Save");
+		mainFileMenu.add(newFile);
+		mainFileMenu.add(saveFile);
+		return mainFileMenu;
 	}
 
 }
