@@ -1,3 +1,4 @@
+package main.project;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -25,6 +26,7 @@ public class MyButton extends JButton{
 			switch (i) {
 			case 1:
 				jframe.dispose();
+				jframe.setVisible(false);
 				new CreateFileOption("New File");
 				break;
 			case 2:

@@ -1,3 +1,4 @@
+package main.project;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.EventQueue;
@@ -64,6 +65,7 @@ public class openCSV extends JPanel {
 		private int frameWidth;
 		private int frameHeight;
 		private ExtraOptions extraOptionPanel = new ExtraOptions();
+		
 		public PaintView() {
 			
 		Produkt productList = new Produkt();
@@ -77,7 +79,6 @@ public class openCSV extends JPanel {
 		for(int i = 1; i <= 4; i++){
 			//frame.add(new JButton(new ImageIcon("images/"+i+".png")));
 			frame.add(new MyButton(new ImageIcon("images/"+i+".png"), frame, i));
-			
 		}
 		/*
 		
