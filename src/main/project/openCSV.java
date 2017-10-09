@@ -188,8 +188,6 @@ public class openCSV extends JPanel {
 		}
 		});
 		
-		closeProgram.addActionListener(t -> {
-		});
 		
 		*/
 		}

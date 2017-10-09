@@ -11,13 +11,23 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
 
 import javax.swing.Action;
 import javax.swing.ActionMap;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
+import javax.swing.JList;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -30,6 +40,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.Caret;
@@ -108,9 +120,26 @@ public class CreateFileOption extends SubViewPanel{
 		newFile.setAccelerator(KeyStroke.getKeyStroke('N', KeyEvent.CTRL_MASK));
 		mainFileMenu.add(newFile)
 					.addActionListener(t -> {
-			textPane.setText("");
-			JOptionPane.showMessageDialog(null, "Test");
-			
+			int n = JOptionPane.showConfirmDialog(this, "Do you create a new file without save? ", "Information", JOptionPane.YES_NO_CANCEL_OPTION);
+			if(n == 0){
+				textPane.setText("");
+			}
+			if(n == 1){
+				JFileChooser chooser = new JFileChooser();
+				FileNameExtensionFilter filter = new FileNameExtensionFilter("File", listDescription());
+				chooser.addChoosableFileFilter(filter);
+				chooser.showSaveDialog(this);
+				try {
+					File file = chooser.getSelectedFile();
+					FileWriter fileWriter = new FileWriter(file + addDateToFile() + ".txt");
+					fileWriter.append(textPane.getText());
+					fileWriter.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				textPane.setText("1");
+				}
 			});
 		mainFileMenu.add(saveFile);
 		mainFileMenu.add(backToMenu)
@@ -122,6 +151,16 @@ public class CreateFileOption extends SubViewPanel{
 		});
 		return mainFileMenu;
 	}
+	private String addDateToFile(){
+		DateFormat dateFormat = DateFormat.getTimeInstance();
+		String date = dateFormat.format(new Date().getTime());
+		return date.replace(':', '_');
+	}
+	private String[] listDescription(){
+		String s[] = new String[]{"csv", "txt"};
+		List list1 = Arrays.asList(s);
+		return s;
+	}
 	private JMenu createEditMenu(){
 		JMenu editMenu= new JMenu("Edit");
 		JMenuItem cut = new JMenuItem("Cut");
@@ -132,12 +171,7 @@ public class CreateFileOption extends SubViewPanel{
 		editMenu.add(bold)
 				.addActionListener(t ->{
 					//textArea.setText("Test" + textPane.getCaretPosition());
-					
 				});
-		editMenu.add(new utils.BoldAction("Test"))
-				.addActionListener(t -> {
-					
-		});
 		return editMenu;
 	}
 }
