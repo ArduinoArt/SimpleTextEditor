@@ -5,6 +5,8 @@ import java.awt.Container;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -89,24 +91,43 @@ public class CreateFileOption extends SubViewPanel{
 		
 	}
 	private JPanel panelWithExtraOption(){
+		int selectionStart = textPane.getSelectionStart();
+		int selectionEnd = textPane.getSelectionEnd();
 		JPanel panel = new JPanel();
 		panel.setBounds(40, 0, 00, 100);
 		JCheckBox boldCheckBox = new JCheckBox("B");
 		boldCheckBox.setToolTipText("Bold text");
-		boldCheckBox.addActionListener(t -> {
+		boldCheckBox.addItemListener(t -> {
+			if(t.getStateChange() == 1){
+				
+				Element element = styledDoc.getCharacterElement(selectionStart);
+				AttributeSet attributeSet = element.getAttributes();
+				MutableAttributeSet mutableAttributeSet =  new SimpleAttributeSet(attributeSet.copyAttributes());
+				StyleConstants.setBold(mutableAttributeSet, true);
+				styledDoc.setCharacterAttributes(selectionStart, textPane.getCaretPosition(), mutableAttributeSet, false);
+			}
+			if(t.getStateChange() == 2){
+				Style style = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
+				styledDoc.setCharacterAttributes(selectionStart, textPane.getCaretPosition(), style , true);
+			}
+			
+				/**/
+			
+		});
+		/*boldCheckBox.addActionListener(t -> {
 			if(boldCheckBox.isSelected()){
 				int selectionStart = textPane.getSelectionStart();
 				int selectionEnd = textPane.getSelectionEnd();
 				Element element = styledDoc.getCharacterElement(selectionStart);
 				AttributeSet attributeSet = element.getAttributes();
 				MutableAttributeSet mutableAttributeSet =  new SimpleAttributeSet(attributeSet.copyAttributes());
-				StyleConstants.setBold(mutableAttributeSet, true);
-				styledDoc.setCharacterAttributes(0, textPane.getCaretPosition(), mutableAttributeSet, true);
+				StyleConstants.setItalic(mutableAttributeSet, true);
+				styledDoc.setCharacterAttributes(0, textPane.getCaretPosition(), mutableAttributeSet, false);
 			}else{
 				Style style = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
 				styledDoc.addStyle("regular", style);
 			}
-		});
+		});*/
 		panel.add(boldCheckBox);
 		return panel;
 	}
@@ -118,30 +139,22 @@ public class CreateFileOption extends SubViewPanel{
 		JMenuItem backToMenu = new JMenuItem("Back to Menu");
 		JMenuItem closeFile = new JMenuItem("Close");
 		newFile.setAccelerator(KeyStroke.getKeyStroke('N', KeyEvent.CTRL_MASK));
+		saveFile.setAccelerator(KeyStroke.getKeyStroke('S', KeyEvent.CTRL_MASK));
 		mainFileMenu.add(newFile)
 					.addActionListener(t -> {
-			int n = JOptionPane.showConfirmDialog(this, "Do you create a new file without save? ", "Information", JOptionPane.YES_NO_CANCEL_OPTION);
+			int n = JOptionPane.showConfirmDialog(this, "Do you want create a new file without save? ", "Information", JOptionPane.YES_NO_CANCEL_OPTION);
 			if(n == 0){
 				textPane.setText("");
 			}
 			if(n == 1){
-				JFileChooser chooser = new JFileChooser();
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("File", listDescription());
-				chooser.addChoosableFileFilter(filter);
-				chooser.showSaveDialog(this);
-				try {
-					File file = chooser.getSelectedFile();
-					FileWriter fileWriter = new FileWriter(file + addDateToFile() + ".txt");
-					fileWriter.append(textPane.getText());
-					fileWriter.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				textPane.setText("1");
+				creteFileToSave();
+				textPane.setText("");
 				}
 			});
-		mainFileMenu.add(saveFile);
+		mainFileMenu.add(saveFile)
+					.addActionListener(t -> {
+				creteFileToSave();
+		});
 		mainFileMenu.add(backToMenu)
 					.addActionListener(t -> {
 		});
@@ -150,6 +163,21 @@ public class CreateFileOption extends SubViewPanel{
 						frame.dispose();
 		});
 		return mainFileMenu;
+	}
+	private void creteFileToSave(){
+		JFileChooser chooser = new JFileChooser();
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("File", listDescription());
+		chooser.addChoosableFileFilter(filter);
+		chooser.showSaveDialog(this);
+		try {
+			File file = chooser.getSelectedFile();
+			FileWriter fileWriter = new FileWriter(file + addDateToFile() + ".txt");
+			fileWriter.append(textPane.getText());
+			fileWriter.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	private String addDateToFile(){
 		DateFormat dateFormat = DateFormat.getTimeInstance();
