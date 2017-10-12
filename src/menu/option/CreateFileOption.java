@@ -71,6 +71,13 @@ public class CreateFileOption extends SubViewPanel{
 	private JTextPane textPane = new JTextPane();
 	private Document document = textPane.getDocument();
 	private StyledDocument styledDoc = textPane.getStyledDocument();
+	
+	public JTextPane getTextPane() {
+		return textPane;
+	}
+	public void setTextPane(JTextPane textPane) {
+		this.textPane = textPane;
+	}
 	public CreateFileOption(String title) {
 		super(title);
 		frame = new SubViewPanel(title).frameMethod();
@@ -95,9 +102,9 @@ public class CreateFileOption extends SubViewPanel{
 		int selectionEnd = textPane.getSelectionEnd();
 		JPanel panel = new JPanel();
 		panel.setBounds(40, 0, 00, 100);
-		JCheckBox boldCheckBox = new JCheckBox("B");
-		boldCheckBox.setToolTipText("Bold text");
-		boldCheckBox.addItemListener(t -> {
+		JCheckBox boldCheckBox = new CheckBoxAction("B", "Bold Text", getTextPane());
+		//boldCheckBox.setToolTipText("Bold text");
+		/*boldCheckBox.addItemListener(t -> {
 			if(t.getStateChange() == 1){
 				
 				Element element = styledDoc.getCharacterElement(selectionStart);
@@ -111,24 +118,10 @@ public class CreateFileOption extends SubViewPanel{
 				styledDoc.setCharacterAttributes(selectionStart, textPane.getCaretPosition(), style , true);
 			}
 			
-				/**/
-			
-		});
-		/*boldCheckBox.addActionListener(t -> {
-			if(boldCheckBox.isSelected()){
-				int selectionStart = textPane.getSelectionStart();
-				int selectionEnd = textPane.getSelectionEnd();
-				Element element = styledDoc.getCharacterElement(selectionStart);
-				AttributeSet attributeSet = element.getAttributes();
-				MutableAttributeSet mutableAttributeSet =  new SimpleAttributeSet(attributeSet.copyAttributes());
-				StyleConstants.setItalic(mutableAttributeSet, true);
-				styledDoc.setCharacterAttributes(0, textPane.getCaretPosition(), mutableAttributeSet, false);
-			}else{
-				Style style = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-				styledDoc.addStyle("regular", style);
-			}
 		});*/
 		panel.add(boldCheckBox);
+		panel.add(new CheckBoxAction("I", "Italic Text", getTextPane()));
+		panel.add(new CheckBoxAction("U", "Underline Text", getTextPane()));
 		return panel;
 	}
 	
