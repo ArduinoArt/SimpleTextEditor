@@ -28,28 +28,30 @@ public class CheckBoxAction extends JCheckBox{
 				textPane = localTextPane;
 				int selectionStart = textPane.getSelectionStart();
 				int selectionEnd = textPane.getSelectionEnd();
-				StyledDocument styledDoc = textPane.getStyledDocument();
+				StyleContext sc = new StyleContext();
+				StyledDocument styledDocument = textPane.getStyledDocument();
+				Style defaultStyle = sc.getStyle(StyleContext.DEFAULT_STYLE);
 				switch (title) {
 				case "B":
 					if(t.getStateChange() == 1){
-						Document doc = textPane.getDocument();
-						StyledDocument styledDocument = textPane.getStyledDocument();
-						StyleContext sc = new StyleContext();
-						Style defaultStyle = sc.getStyle(StyleContext.DEFAULT_STYLE);
 						StyleConstants.setBold(defaultStyle, true);
 						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
 					}
 					if(t.getStateChange() == 2){
-						Document doc = textPane.getDocument();
-						StyledDocument styledDocument = textPane.getStyledDocument();
-						StyleContext sc = new StyleContext();
-						Style defaultStyle = sc.getStyle(StyleContext.DEFAULT_STYLE);
 						defaultStyle.removeAttribute(StyleConstants.Bold);
-						//StyleConstants.setItalic(defaultStyle, true);
 						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
 					}
 					break;
-
+				case "I":
+					if(t.getStateChange() == 1){
+						StyleConstants.setItalic(defaultStyle, true);
+						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
+					}
+					if(t.getStateChange() == 2){
+						defaultStyle.removeAttribute(StyleConstants.Italic);
+						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
+					}
+					break;
 				default:
 					break;
 				}

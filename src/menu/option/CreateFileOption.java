@@ -35,9 +35,12 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
+import javax.swing.SpinnerModel;
+import javax.swing.SpinnerNumberModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -70,7 +73,7 @@ public class CreateFileOption extends SubViewPanel{
 	private JTextArea textArea = new JTextArea();
 	private JTextPane textPane = new JTextPane();
 	private Document document = textPane.getDocument();
-	private StyledDocument styledDoc = textPane.getStyledDocument();
+	
 	
 	public JTextPane getTextPane() {
 		return textPane;
@@ -122,6 +125,7 @@ public class CreateFileOption extends SubViewPanel{
 		panel.add(boldCheckBox);
 		panel.add(new CheckBoxAction("I", "Italic Text", getTextPane()));
 		panel.add(new CheckBoxAction("U", "Underline Text", getTextPane()));
+		panel.add(spinnerCustomization());
 		return panel;
 	}
 	
@@ -171,6 +175,23 @@ public class CreateFileOption extends SubViewPanel{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+	private JSpinner spinnerCustomization(){
+		SpinnerModel modelSpinner = new SpinnerNumberModel();
+		modelSpinner.setValue(16);
+		JSpinner jSpinner = new JSpinner(modelSpinner);
+		jSpinner.addChangeListener(t -> {
+			 StyledDocument styledDoc = textPane.getStyledDocument();
+			 int startSelection = textPane.getSelectionStart();
+			 int endSelection = textPane.getSelectionEnd();
+			 StyleContext styleContext = new StyleContext();
+			 Style defaultStyle = styleContext.getStyle(StyleContext.DEFAULT_STYLE);
+			Integer i = (Integer) jSpinner.getValue();
+			textPane.setText("" + i);
+			StyleConstants.setFontSize(defaultStyle, i);
+			styledDoc.setCharacterAttributes(startSelection, endSelection, defaultStyle, true);});
+		
+		return jSpinner;
 	}
 	private String addDateToFile(){
 		DateFormat dateFormat = DateFormat.getTimeInstance();
