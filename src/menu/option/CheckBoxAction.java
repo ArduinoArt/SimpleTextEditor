@@ -19,7 +19,8 @@ public class CheckBoxAction extends JCheckBox{
 	private String title;
 	private String toolTipText;
 	private JTextPane textPane;
-		public CheckBoxAction(String title, String toolTipText, JTextPane localTextPane){
+
+	public CheckBoxAction(String title, String toolTipText, JTextPane localTextPane){
 			
 			super(title);
 			this.toolTipText = toolTipText;
@@ -49,6 +50,16 @@ public class CheckBoxAction extends JCheckBox{
 					}
 					if(t.getStateChange() == 2){
 						defaultStyle.removeAttribute(StyleConstants.Italic);
+						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
+					}
+					break;
+				case "U":
+					if(t.getStateChange() == 1){
+						StyleConstants.setUnderline(defaultStyle, true);
+						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
+					}
+					if(t.getStateChange() == 2){
+						defaultStyle.removeAttribute(StyleConstants.Underline);
 						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
 					}
 					break;

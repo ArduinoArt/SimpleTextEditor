@@ -3,6 +3,7 @@ package menu.option;
 import java.awt.Component;
 import java.awt.Container;
 import java.awt.GridLayout;
+import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -35,12 +36,16 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
+import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
 import javax.swing.JTextPane;
 import javax.swing.KeyStroke;
 import javax.swing.SpinnerModel;
 import javax.swing.SpinnerNumberModel;
+import javax.swing.event.CaretEvent;
+import javax.swing.event.CaretListener;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.DocumentEvent;
@@ -73,8 +78,7 @@ public class CreateFileOption extends SubViewPanel{
 	private JTextArea textArea = new JTextArea();
 	private JTextPane textPane = new JTextPane();
 	private Document document = textPane.getDocument();
-	
-	
+	private JScrollPane scrollPane = new JScrollPane(getTextPane());
 	public JTextPane getTextPane() {
 		return textPane;
 	}
@@ -85,6 +89,7 @@ public class CreateFileOption extends SubViewPanel{
 		super(title);
 		frame = new SubViewPanel(title).frameMethod();
 		frame.setJMenuBar(menuFile);
+		
 		menuFile.add(createMenu());
 		menuFile.add(createEditMenu());
 		menuFile.add(panelWithExtraOption());
@@ -92,37 +97,17 @@ public class CreateFileOption extends SubViewPanel{
 		InputMap inputMap = textArea.getInputMap();
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.CTRL_MASK, KeyEvent.VK_B), "none");
 		
-		textPane.setBounds(0, 0, frame.getWidth(), frame.getHeight() - FOOTER_SIZE);
-		
+		scrollPane.setBounds(0, 0, frame.getWidth(), frame.getHeight() - FOOTER_SIZE);
 		textPane.addCaretListener(t -> {
 		});
 		frame.add(textArea);
-		frame.add(textPane);
+		frame.add(scrollPane);
 		
 	}
 	private JPanel panelWithExtraOption(){
-		int selectionStart = textPane.getSelectionStart();
-		int selectionEnd = textPane.getSelectionEnd();
 		JPanel panel = new JPanel();
 		panel.setBounds(40, 0, 00, 100);
-		JCheckBox boldCheckBox = new CheckBoxAction("B", "Bold Text", getTextPane());
-		//boldCheckBox.setToolTipText("Bold text");
-		/*boldCheckBox.addItemListener(t -> {
-			if(t.getStateChange() == 1){
-				
-				Element element = styledDoc.getCharacterElement(selectionStart);
-				AttributeSet attributeSet = element.getAttributes();
-				MutableAttributeSet mutableAttributeSet =  new SimpleAttributeSet(attributeSet.copyAttributes());
-				StyleConstants.setBold(mutableAttributeSet, true);
-				styledDoc.setCharacterAttributes(selectionStart, textPane.getCaretPosition(), mutableAttributeSet, false);
-			}
-			if(t.getStateChange() == 2){
-				Style style = StyleContext.getDefaultStyleContext().getStyle(StyleContext.DEFAULT_STYLE);
-				styledDoc.setCharacterAttributes(selectionStart, textPane.getCaretPosition(), style , true);
-			}
-			
-		});*/
-		panel.add(boldCheckBox);
+		panel.add(new CheckBoxAction("B", "Bold Text", getTextPane()));
 		panel.add(new CheckBoxAction("I", "Italic Text", getTextPane()));
 		panel.add(new CheckBoxAction("U", "Underline Text", getTextPane()));
 		panel.add(spinnerCustomization());
@@ -181,15 +166,15 @@ public class CreateFileOption extends SubViewPanel{
 		modelSpinner.setValue(16);
 		JSpinner jSpinner = new JSpinner(modelSpinner);
 		jSpinner.addChangeListener(t -> {
-			 StyledDocument styledDoc = textPane.getStyledDocument();
-			 int startSelection = textPane.getSelectionStart();
-			 int endSelection = textPane.getSelectionEnd();
-			 StyleContext styleContext = new StyleContext();
-			 Style defaultStyle = styleContext.getStyle(StyleContext.DEFAULT_STYLE);
+			StyledDocument styledDoc = textPane.getStyledDocument();
+			int selectionStart = textPane.getSelectionStart();
+			int selectionEnd = textPane.getSelectionEnd();
+			StyleContext styleContext = new StyleContext();
+			Style defaultStyle = styleContext.getStyle(StyleContext.DEFAULT_STYLE);
 			Integer i = (Integer) jSpinner.getValue();
-			textPane.setText("" + i);
 			StyleConstants.setFontSize(defaultStyle, i);
-			styledDoc.setCharacterAttributes(startSelection, endSelection, defaultStyle, true);});
+			styledDoc.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
+			});
 		
 		return jSpinner;
 	}
