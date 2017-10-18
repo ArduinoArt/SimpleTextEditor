@@ -12,6 +12,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
@@ -23,8 +24,11 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import javax.imageio.ImageIO;
 import javax.swing.Action;
 import javax.swing.ActionMap;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.InputMap;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -67,6 +71,7 @@ import javax.swing.text.StyledDocument;
 import javax.swing.text.StyledEditorKit;
 import javax.swing.text.StyledEditorKit.BoldAction;
 
+import javafx.scene.image.Image;
 import main.project.openCSV;
 
 
@@ -92,11 +97,12 @@ public class CreateFileOption extends SubViewPanel{
 		
 		menuFile.add(createMenu());
 		menuFile.add(createEditMenu());
+		menuFile.add(createInsetMenu());
 		menuFile.add(panelWithExtraOption());
 		textArea.setBounds(0, frame.getHeight() - FOOTER_STARTED, frame.getWidth(), frame.getHeight());
 		InputMap inputMap = textArea.getInputMap();
 		inputMap.put(KeyStroke.getKeyStroke(KeyEvent.CTRL_MASK, KeyEvent.VK_B), "none");
-		
+
 		scrollPane.setBounds(0, 0, frame.getWidth(), frame.getHeight() - FOOTER_SIZE);
 		textPane.addCaretListener(t -> {
 		});
@@ -139,6 +145,7 @@ public class CreateFileOption extends SubViewPanel{
 		});
 		mainFileMenu.add(backToMenu)
 					.addActionListener(t -> {
+						new openCSV();
 		});
 		mainFileMenu.add(closeFile)
 					.addActionListener(t -> {
@@ -200,5 +207,11 @@ public class CreateFileOption extends SubViewPanel{
 					//textArea.setText("Test" + textPane.getCaretPosition());
 				});
 		return editMenu;
+	}
+	private JMenu createInsetMenu(){
+		JMenu insetMenu= new JMenu("Inset");
+		JMenuItem picture = new JMenuItem("Picture");
+		insetMenu.add(picture);
+		return insetMenu;
 	}
 }
