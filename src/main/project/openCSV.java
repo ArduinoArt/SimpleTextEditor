@@ -56,12 +56,11 @@ public class openCSV extends JPanel {
 			@Override
 			public void run() {
 			new PaintView();
-		
 			}
 		});
 	}
 }
-	class PaintView extends Thread
+	class PaintView
 	{
 		private int frameWidth;
 		private int frameHeight;

@@ -12,6 +12,8 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
@@ -56,21 +58,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import javax.swing.text.AttributeSet;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Caret;
-import javax.swing.text.DefaultStyledDocument;
-import javax.swing.text.Document;
-import javax.swing.text.Element;
-import javax.swing.text.MutableAttributeSet;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.Style;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyleContext;
-import javax.swing.text.StyledDocument;
-import javax.swing.text.StyledEditorKit;
-import javax.swing.text.StyledEditorKit.BoldAction;
+import javax.swing.text.*;
 
+import adapters.WindowAdapterListener;
 import javafx.scene.image.Image;
 import main.project.openCSV;
 
@@ -94,7 +84,26 @@ public class CreateFileOption extends SubViewPanel{
 		super(title);
 		frame = new SubViewPanel(title).frameMethod();
 		frame.setJMenuBar(menuFile);
-		
+		frame.setDefaultCloseOperation(JFrame.HIDE_ON_CLOSE);
+		//!!! Remember about create class with all available Listeners
+		frame.addWindowListener(new WindowListener() {
+			@Override
+			public void windowOpened(WindowEvent e) {}
+			@Override
+			public void windowIconified(WindowEvent e) {}
+			@Override
+			public void windowDeiconified(WindowEvent e) {}
+			@Override
+			public void windowDeactivated(WindowEvent e) {}
+			@Override
+			public void windowClosing(WindowEvent e) {
+				createFileToSave();
+			}
+			@Override
+			public void windowClosed(WindowEvent e) {}
+			@Override
+			public void windowActivated(WindowEvent e) {}
+		});
 		menuFile.add(createMenu());
 		menuFile.add(createEditMenu());
 		menuFile.add(createInsetMenu());
@@ -108,7 +117,6 @@ public class CreateFileOption extends SubViewPanel{
 		});
 		frame.add(textArea);
 		frame.add(scrollPane);
-		
 	}
 	private JPanel panelWithExtraOption(){
 		JPanel panel = new JPanel();
@@ -124,6 +132,7 @@ public class CreateFileOption extends SubViewPanel{
 		JMenu mainFileMenu= new JMenu("File");
 		JMenuItem newFile = new JMenuItem("New");
 		JMenuItem saveFile = new JMenuItem("Save");
+		JMenuItem saveAndClose = new JMenuItem("Save and Close");
 		JMenuItem backToMenu = new JMenuItem("Back to Menu");
 		JMenuItem closeFile = new JMenuItem("Close");
 		newFile.setAccelerator(KeyStroke.getKeyStroke('N', KeyEvent.CTRL_MASK));
@@ -135,17 +144,19 @@ public class CreateFileOption extends SubViewPanel{
 				textPane.setText("");
 			}
 			if(n == 1){
-				creteFileToSave();
+				createFileToSave();
 				textPane.setText("");
 				}
 			});
 		mainFileMenu.add(saveFile)
 					.addActionListener(t -> {
-				creteFileToSave();
+						createFileToSave();
+		});
+		mainFileMenu.add(saveAndClose)
+					.addActionListener(t -> {
 		});
 		mainFileMenu.add(backToMenu)
 					.addActionListener(t -> {
-						new openCSV();
 		});
 		mainFileMenu.add(closeFile)
 					.addActionListener(t -> {
@@ -153,10 +164,10 @@ public class CreateFileOption extends SubViewPanel{
 		});
 		return mainFileMenu;
 	}
-	private void creteFileToSave(){
+	private void createFileToSave(){
 		JFileChooser chooser = new JFileChooser();
-		FileNameExtensionFilter filter = new FileNameExtensionFilter("File", listDescription());
-		chooser.addChoosableFileFilter(filter);
+		chooser.addChoosableFileFilter(new FileNameExtensionFilter("File", listFileDescription()));
+		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Image", listImageDescription()));
 		chooser.showSaveDialog(this);
 		try {
 			File file = chooser.getSelectedFile();
@@ -190,9 +201,12 @@ public class CreateFileOption extends SubViewPanel{
 		String date = dateFormat.format(new Date().getTime());
 		return date.replace(':', '_');
 	}
-	private String[] listDescription(){
-		String s[] = new String[]{"csv", "txt"};
-		List list1 = Arrays.asList(s);
+	private String[] listFileDescription(){
+		String s[] = new String[]{"csv", "txt", "doc"};
+		return s;
+	}
+	private String[] listImageDescription(){
+		String s[] = new String[]{"png", "jpg", "jpeg"};
 		return s;
 	}
 	private JMenu createEditMenu(){
@@ -211,7 +225,21 @@ public class CreateFileOption extends SubViewPanel{
 	private JMenu createInsetMenu(){
 		JMenu insetMenu= new JMenu("Inset");
 		JMenuItem picture = new JMenuItem("Picture");
-		insetMenu.add(picture);
+		insetMenu.add(picture)
+				.addActionListener(t -> {
+					try {
+						JFileChooser imageChooser = new JFileChooser();
+						imageChooser.addChoosableFileFilter(new FileNameExtensionFilter("Image", listImageDescription()));
+						imageChooser.showSaveDialog(this);
+						File file = imageChooser.getSelectedFile();
+						BufferedImage image;
+						image = ImageIO.read(file);
+						getTextPane().insertIcon(new ImageIcon(image));
+					} 
+					catch (IOException e) {
+						e.printStackTrace();
+					}
+		});
 		return insetMenu;
 	}
 }

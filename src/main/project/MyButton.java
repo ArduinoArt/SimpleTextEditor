@@ -22,11 +22,10 @@ public class MyButton extends JButton{
 	{
 		setIcon(icon);
 		addActionListener(t -> {
-			
 			switch (i) {
 			case 1:
-				jframe.dispose();
-				jframe.setVisible(false);
+				/*jframe.dispose();
+				jframe.setVisible(false);*/
 				new CreateFileOption("New File");
 				break;
 			case 2:
@@ -39,18 +38,10 @@ public class MyButton extends JButton{
 				break;
 			case 4:
 				jframe.dispose();
-				
 				break;
 			default:
 				break;
 			}
-			
-	/*	if(i == 1){
-			setText("1");
-			jframe.dispose();
-			new SubViewPanel("Nowy dokument");
-		}*/
-		
 		});
 	}
 
