@@ -30,7 +30,7 @@ public class MyButton extends JButton{
 				break;
 			case 2:
 				jframe.dispose();
-				new OpenFileOption("Open File");
+				new OpenFileOption("Open only CSV");
 				break;
 			case 3:
 				jframe.dispose();

@@ -16,10 +16,10 @@ import javax.swing.text.StyledDocument;
 
 public class CheckBoxAction extends JCheckBox{
 	
-	private String title;
-	private String toolTipText;
-	private JTextPane textPane;
-
+	String title;
+	String toolTipText;
+	JTextPane textPane;
+	
 	public CheckBoxAction(String title, String toolTipText, JTextPane localTextPane){
 			
 			super(title);

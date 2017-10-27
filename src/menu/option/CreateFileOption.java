@@ -18,6 +18,8 @@ import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
@@ -60,8 +62,11 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.*;
 
+import com.itextpdf.text.DocumentException;
+
 import adapters.WindowAdapterListener;
 import javafx.scene.image.Image;
+import main.project.HistoryFilesFrame;
 import main.project.openCSV;
 
 
@@ -74,6 +79,20 @@ public class CreateFileOption extends SubViewPanel{
 	private JTextPane textPane = new JTextPane();
 	private Document document = textPane.getDocument();
 	private JScrollPane scrollPane = new JScrollPane(getTextPane());
+	private int selectionStart = textPane.getSelectionStart();
+	private int selectionEnd = textPane.getSelectionEnd();
+	public int getSelectionStart() {
+		return selectionStart;
+	}
+	public void setSelectionStart(int selectionStart) {
+		this.selectionStart = selectionStart;
+	}
+	public int getSelectionEnd() {
+		return selectionEnd;
+	}
+	public void setSelectionEnd(int selectionEnd) {
+		this.selectionEnd = selectionEnd;
+	}
 	public JTextPane getTextPane() {
 		return textPane;
 	}
@@ -133,6 +152,8 @@ public class CreateFileOption extends SubViewPanel{
 		JMenuItem newFile = new JMenuItem("New");
 		JMenuItem saveFile = new JMenuItem("Save");
 		JMenuItem saveAndClose = new JMenuItem("Save and Close");
+		JMenuItem historyDocument = new JMenuItem("Latest file");
+		JMenuItem exportToPdf = new JMenuItem("Export to PDF");
 		JMenuItem backToMenu = new JMenuItem("Back to Menu");
 		JMenuItem closeFile = new JMenuItem("Close");
 		newFile.setAccelerator(KeyStroke.getKeyStroke('N', KeyEvent.CTRL_MASK));
@@ -155,6 +176,13 @@ public class CreateFileOption extends SubViewPanel{
 		mainFileMenu.add(saveAndClose)
 					.addActionListener(t -> {
 		});
+		mainFileMenu.add(historyDocument)
+					.addActionListener(t -> {
+						new HistoryFilesFrame();
+		});
+		mainFileMenu.add(exportToPdf)
+					.addActionListener(t -> {
+		});
 		mainFileMenu.add(backToMenu)
 					.addActionListener(t -> {
 		});
@@ -170,9 +198,15 @@ public class CreateFileOption extends SubViewPanel{
 		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Image", listImageDescription()));
 		chooser.showSaveDialog(this);
 		try {
+			//changeToLocalFile
+			File tempHistoryFiles = File.createTempFile("D://tempHistroyFiles", ".tmp");
 			File file = chooser.getSelectedFile();
-			FileWriter fileWriter = new FileWriter(file + addDateToFile() + ".txt");
+			String textFile = file + addDateToFile() + ".txt";
+			FileWriter fileWriter = new FileWriter(textFile);
+			FileWriter fileTempWriter = new FileWriter(tempHistoryFiles);
+			fileTempWriter.append(textFile);
 			fileWriter.append(textPane.getText());
+			fileTempWriter.close();
 			fileWriter.close();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -211,15 +245,13 @@ public class CreateFileOption extends SubViewPanel{
 	}
 	private JMenu createEditMenu(){
 		JMenu editMenu= new JMenu("Edit");
-		JMenuItem cut = new JMenuItem("Cut");
-		JMenuItem copy = new JMenuItem("Copy");
-		JMenuItem bold = new JMenuItem("Bold");
-		editMenu.add(cut);
-		editMenu.add(copy);
-		editMenu.add(bold)
-				.addActionListener(t ->{
-					//textArea.setText("Test" + textPane.getCaretPosition());
-				});
+		JMenuItem textToLeft = new JMenuItem("Text to Left");
+		JMenuItem textToRight = new JMenuItem("Text to Right");
+		JMenuItem textToCenter = new JMenuItem("Text to Center");
+		editMenu.add(textToLeft);
+		editMenu.add(textToRight);
+		editMenu.add(new MenuItemEditAction("Text to Center", textPane));
+				
 		return editMenu;
 	}
 	private JMenu createInsetMenu(){
