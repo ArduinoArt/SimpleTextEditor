@@ -14,6 +14,8 @@ import javax.swing.text.StyleConstants;
 import javax.swing.text.StyleContext;
 import javax.swing.text.StyledDocument;
 
+import com.sun.prism.paint.Color;
+
 public class CheckBoxAction extends JCheckBox{
 	
 	String title;
@@ -35,8 +37,11 @@ public class CheckBoxAction extends JCheckBox{
 				switch (title) {
 				case "B":
 					if(t.getStateChange() == 1){
-						StyleConstants.setBold(defaultStyle, true);
-						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, defaultStyle, true);
+						Style boldStyle = sc.addStyle("BoldStyle", defaultStyle);
+						StyleConstants.setBold(boldStyle, true);
+						//Style extra = sc.addStyle("Extra", boldStyle);
+						//StyleConstants.setFontSize(extra, 26);
+						styledDocument.setCharacterAttributes(selectionStart, selectionEnd, boldStyle, true);
 					}
 					if(t.getStateChange() == 2){
 						defaultStyle.removeAttribute(StyleConstants.Bold);

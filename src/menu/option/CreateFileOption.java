@@ -17,11 +17,15 @@ import java.awt.event.WindowListener;
 import java.awt.image.BufferedImage;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.Reader;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -64,6 +68,7 @@ import javax.swing.text.*;
 
 import com.itextpdf.text.DocumentException;
 
+import actions.MenuItemEditAction;
 import adapters.WindowAdapterListener;
 import javafx.scene.image.Image;
 import main.project.HistoryFilesFrame;
@@ -197,22 +202,36 @@ public class CreateFileOption extends SubViewPanel{
 		chooser.addChoosableFileFilter(new FileNameExtensionFilter("File", listFileDescription()));
 		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Image", listImageDescription()));
 		chooser.showSaveDialog(this);
+		List<String> listOfFiles = new ArrayList<String>(10);
+		String ss= "";
 		try {
-			//changeToLocalFile
-			File tempHistoryFiles = File.createTempFile("D://tempHistroyFiles", ".tmp");
+			File historyCopyTempFile = new File("temp/copyFile.txt");
+			FileReader fileHistoryReader = new FileReader(historyCopyTempFile);
+			BufferedReader br = new BufferedReader(fileHistoryReader);
 			File file = chooser.getSelectedFile();
 			String textFile = file + addDateToFile() + ".txt";
 			FileWriter fileWriter = new FileWriter(textFile);
-			FileWriter fileTempWriter = new FileWriter(tempHistoryFiles);
-			fileTempWriter.append(textFile);
+			FileWriter fileHistory = new FileWriter(historyCopyTempFile, true);
 			fileWriter.append(textPane.getText());
-			fileTempWriter.close();
 			fileWriter.close();
+			fileHistory.append(textFile + "\n");
+			fileHistory.close();
+			
+			int iteratorFiles = 0;
+			while((ss = br.readLine()) != null){
+				System.out.println(iteratorFiles++ + ss);
+				//add requirement file with start "null" isn't save
+				//add constraint no more than 10 files
+				//add List and stream
+			//	listOfFiles.add(ss);
+			}
+			
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		
 	}
+	public void showAllHistoryFiles(){}
 	private JSpinner spinnerCustomization(){
 		SpinnerModel modelSpinner = new SpinnerNumberModel();
 		modelSpinner.setValue(16);
@@ -244,14 +263,12 @@ public class CreateFileOption extends SubViewPanel{
 		return s;
 	}
 	private JMenu createEditMenu(){
-		JMenu editMenu= new JMenu("Edit");
-		JMenuItem textToLeft = new JMenuItem("Text to Left");
-		JMenuItem textToRight = new JMenuItem("Text to Right");
-		JMenuItem textToCenter = new JMenuItem("Text to Center");
-		editMenu.add(textToLeft);
-		editMenu.add(textToRight);
-		editMenu.add(new MenuItemEditAction("Text to Center", textPane));
-				
+		JMenu editMenu= new JMenu("Edit");		
+		editMenu.add(new MenuItemEditAction("Text to Center", textPane, "center"));
+		editMenu.add(new MenuItemEditAction("Text to Left", textPane, "left"));
+		editMenu.add(new MenuItemEditAction("Text to Right", textPane, "right"));
+		editMenu.add(new MenuItemEditAction("Text to Justify", textPane, "justify"));
+		editMenu.add(new MenuItemEditAction("Space above", textPane, "space-above"));
 		return editMenu;
 	}
 	private JMenu createInsetMenu(){
