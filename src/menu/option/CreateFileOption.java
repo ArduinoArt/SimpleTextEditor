@@ -183,7 +183,12 @@ public class CreateFileOption extends SubViewPanel{
 		});
 		mainFileMenu.add(historyDocument)
 					.addActionListener(t -> {
-						new HistoryFilesFrame();
+						try {
+							new HistoryFilesFrame();
+						} catch (IOException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
 		});
 		mainFileMenu.add(exportToPdf)
 					.addActionListener(t -> {
@@ -202,29 +207,19 @@ public class CreateFileOption extends SubViewPanel{
 		chooser.addChoosableFileFilter(new FileNameExtensionFilter("File", listFileDescription()));
 		chooser.addChoosableFileFilter(new FileNameExtensionFilter("Image", listImageDescription()));
 		chooser.showSaveDialog(this);
-		List<String> listOfFiles = new ArrayList<String>(10);
-		String ss= "";
 		try {
 			File historyCopyTempFile = new File("temp/copyFile.txt");
-			FileReader fileHistoryReader = new FileReader(historyCopyTempFile);
-			BufferedReader br = new BufferedReader(fileHistoryReader);
 			File file = chooser.getSelectedFile();
 			String textFile = file + addDateToFile() + ".txt";
 			FileWriter fileWriter = new FileWriter(textFile);
 			FileWriter fileHistory = new FileWriter(historyCopyTempFile, true);
 			fileWriter.append(textPane.getText());
 			fileWriter.close();
+			if(!textFile.contains("null")){
 			fileHistory.append(textFile + "\n");
-			fileHistory.close();
-			
-			int iteratorFiles = 0;
-			while((ss = br.readLine()) != null){
-				System.out.println(iteratorFiles++ + ss);
-				//add requirement file with start "null" isn't save
-				//add constraint no more than 10 files
-				//add List and stream
-			//	listOfFiles.add(ss);
 			}
+			fileHistory.close();
+		
 			
 		} catch (IOException e) {
 			e.printStackTrace();
