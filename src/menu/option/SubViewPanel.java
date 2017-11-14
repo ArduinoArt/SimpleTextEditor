@@ -13,6 +13,7 @@ public class SubViewPanel extends JPanel {
 	public SubViewPanel(String title) {
 		this.title = title;
 	}
+	public SubViewPanel(){}
 	public JFrame frameMethod()
 	{
 		JFrame frame = new JFrame(title);

@@ -56,7 +56,6 @@ public class HistoryFilesFrame{
 			//listOfFiles.add(ss);
 			helpDataFiles[iterator++] = ss;
 		}
-		
 		for(int i = 0; i < data.length; i++){
 			data[i][0] = helpDataFiles[i];
 			}

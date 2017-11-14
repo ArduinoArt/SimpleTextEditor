@@ -71,6 +71,7 @@ import com.itextpdf.text.DocumentException;
 import actions.MenuItemEditAction;
 import adapters.WindowAdapterListener;
 import javafx.scene.image.Image;
+import main.project.FindAndReplaceKeyWords;
 import main.project.HistoryFilesFrame;
 import main.project.openCSV;
 
@@ -104,6 +105,7 @@ public class CreateFileOption extends SubViewPanel{
 	public void setTextPane(JTextPane textPane) {
 		this.textPane = textPane;
 	}
+	public CreateFileOption(){}
 	public CreateFileOption(String title) {
 		super(title);
 		frame = new SubViewPanel(title).frameMethod();
@@ -258,12 +260,15 @@ public class CreateFileOption extends SubViewPanel{
 		return s;
 	}
 	private JMenu createEditMenu(){
-		JMenu editMenu= new JMenu("Edit");		
+		JMenu editMenu= new JMenu("Edit");
 		editMenu.add(new MenuItemEditAction("Text to Center", textPane, "center"));
 		editMenu.add(new MenuItemEditAction("Text to Left", textPane, "left"));
 		editMenu.add(new MenuItemEditAction("Text to Right", textPane, "right"));
 		editMenu.add(new MenuItemEditAction("Text to Justify", textPane, "justify"));
 		editMenu.add(new MenuItemEditAction("Space above", textPane, "space-above"));
+		editMenu.add(new JMenuItem("Find and Replace")).addActionListener(t->{
+			new FindAndReplaceKeyWords();
+		});
 		return editMenu;
 	}
 	private JMenu createInsetMenu(){
